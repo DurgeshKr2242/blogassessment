@@ -57,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/CreateBlogFailedErrorResponseString'
 
     get:
       summary: Retrieve All Blog Posts
@@ -73,13 +73,13 @@ paths:
                   blogs:
                     type: array
                     items:
-                      $ref: '#/components/schemas/BlogPost'
+                      $ref: '#/components/schemas/GetBlogsFailedErrorResponseString'
         '500':
           description: Failed to get blog posts.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/GetBlogsFailedErrorResponseString'
 
   /blog-post/{ID}:
     parameters:
@@ -114,13 +114,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/BlogNotFoundErrorResponseString'
         '500':
           description: Failed to get blog post.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/GetBlogFailedErrorResponseString'
     patch:
       summary: Update a Blog Post
       description: Updates a blog post by its UUID. Only the provided fields will be updated.
@@ -152,13 +152,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/BlogNotFoundErrorResponseString'
         '500':
           description: Failed to update blog post.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/UpdateBlogFailedErrorResponseString'
     delete:
       summary: Delete a Blog Post
       description: Deletes a blog post by its UUID.
@@ -184,13 +184,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/BlogNotFoundErrorResponseString'
         '500':
           description: Failed to delete blog post.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponseString'
+                $ref: '#/components/schemas/DeleteBlogFailedErrorResponseString'
 
 components:
   schemas:
@@ -266,12 +266,47 @@ components:
           format: date-time
           example: "2025-02-07T22:01:38.640214Z"
 
-    ErrorResponseString:
+    BlogNotFoundErrorResponseString:
       type: object
       properties:
         message:
           type: string
           example: blog post not found
+
+    CreateBlogFailedErrorResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+          example: failed to create blog post
+
+    GetBlogsFailedErrorResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+          example: failed to get blog posts
+
+    GetBlogFailedErrorResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+          example: failed to get blog post
+
+    UpdateBlogFailedErrorResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+          example: failed to update blog post
+
+    DeleteBlogFailedErrorResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+          example: failed to delete blog post
 
     ValidationErrorResponse:
       type: object

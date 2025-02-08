@@ -14,14 +14,14 @@ func SetupRoutes(blogPostHandler *handlers.BlogPostHandler) *gin.Engine {
 		c.JSON(200, gin.H{"status": "OK"})
 	})
 
-	// Game routes
-	gameRoutes := r.Group("/blog-post")
+	// Blog Post routes
+	blogRoutes := r.Group("/blog-post")
 	{
-		gameRoutes.POST("/", blogPostHandler.CreateBlogPost)
-		gameRoutes.GET("/", blogPostHandler.GetBlogPosts)
-		gameRoutes.GET("/:ID", blogPostHandler.GetBlogPost)
-		gameRoutes.DELETE("/:ID", blogPostHandler.DeleteBlogPost)
-		gameRoutes.PATCH("/:ID", blogPostHandler.UpdateBlogPost)
+		blogRoutes.POST("/", blogPostHandler.CreateBlogPost)
+		blogRoutes.GET("/", blogPostHandler.GetBlogPosts)
+		blogRoutes.GET("/:ID", blogPostHandler.GetBlogPost)
+		blogRoutes.DELETE("/:ID", blogPostHandler.DeleteBlogPost)
+		blogRoutes.PATCH("/:ID", blogPostHandler.UpdateBlogPost)
 	}
 
 	return r
