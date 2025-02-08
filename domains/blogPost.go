@@ -46,7 +46,7 @@ func (d *blogPostDomain) CreateBlogPost(blog *models.BlogPost) (*uuid.UUID, erro
     `
 	now := time.Now()
 	err := d.db.QueryRow(query, blog.Title, blog.Description, blog.Body, now, now).
-		Scan(ID)
+		Scan(&ID)
 	if err != nil {
 		return nil, ErrorCreateBlogPostFailed
 	}
