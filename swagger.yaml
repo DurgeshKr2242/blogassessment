@@ -1,0 +1,286 @@
+openapi: "3.0.0"
+info:
+  title: Blog Assessment API
+  version: "1.0.0"
+  description: >
+    This API provides endpoints to create, retrieve, update, and delete blog posts.
+    It also includes a health check endpoint.
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Returns a simple status message indicating the service is up.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  /blog-post:
+    post:
+      summary: Create a New Blog Post
+      description: Creates a new blog post with a title, description, and body.
+      requestBody:
+        description: Blog post to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBlogPostRequest'
+      responses:
+        '201':
+          description: Blog post created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: blog post create successfully
+                  ID:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+        '400':
+          description: Invalid request body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Failed to create blog post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+
+    get:
+      summary: Retrieve All Blog Posts
+      description: Retrieves a list of all blog posts.
+      responses:
+        '200':
+          description: List of blog posts retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blogs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BlogPost'
+        '500':
+          description: Failed to get blog posts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+
+  /blog-post/{ID}:
+    parameters:
+      - in: path
+        name: ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier of the blog post.
+    get:
+      summary: Retrieve a Single Blog Post
+      description: Retrieves a blog post by its UUID.
+      responses:
+        '200':
+          description: Blog post retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blog:
+                    $ref: '#/components/schemas/BlogPost'
+        '400':
+          description: Invalid ID supplied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Blog post not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+        '500':
+          description: Failed to get blog post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+    patch:
+      summary: Update a Blog Post
+      description: Updates a blog post by its UUID. Only the provided fields will be updated.
+      requestBody:
+        description: Fields to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBlogPostRequest'
+      responses:
+        '200':
+          description: Blog post updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blog:
+                    $ref: '#/components/schemas/BlogPost'
+        '400':
+          description: Invalid request parameters or body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Blog post not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+        '500':
+          description: Failed to update blog post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+    delete:
+      summary: Delete a Blog Post
+      description: Deletes a blog post by its UUID.
+      responses:
+        '200':
+          description: Blog post deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: blog post deleted successfully
+        '400':
+          description: Invalid ID supplied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Blog post not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+        '500':
+          description: Failed to delete blog post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseString'
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
+
+    CreateBlogPostRequest:
+      type: object
+      required:
+        - title
+        - description
+        - body
+      properties:
+        title:
+          type: string
+          minLength: 5
+          maxLength: 60
+          example: Created Title
+        description:
+          type: string
+          minLength: 10
+          maxLength: 300
+          example: Created description
+        body:
+          type: string
+          minLength: 10
+          example: Created body
+
+    UpdateBlogPostRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 5
+          maxLength: 60
+          example: Updated Title
+        description:
+          type: string
+          minLength: 10
+          maxLength: 300
+          example: Updated description
+        body:
+          type: string
+          minLength: 10
+          example: Updated body
+
+    BlogPost:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        title:
+          type: string
+          example: Some title for blog
+        description:
+          type: string
+          example: Some description for the blog
+        body:
+          type: string
+          example: Some body for the blog
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-02-07T22:01:38.640214Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-02-07T22:01:38.640214Z"
+
+    ErrorResponseString:
+      type: object
+      properties:
+        message:
+          type: string
+          example: blog post not found
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+          example:
+            - ID: must be a valid UUID
